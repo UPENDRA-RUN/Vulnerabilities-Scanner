@@ -8,35 +8,50 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Dark Ember Gradient Theme */
+    --background: 243 21% 11%; /* #1F1C2C */
+    --foreground: 212 13% 90%; /* #E5E7EB */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 243 21% 11%;
+    --card-foreground: 212 13% 90%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 243 21% 11%;
+    --popover-foreground: 212 13% 90%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 199 95% 60%; /* #38BDF8 neon blue */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 243 21% 15%;
+    --secondary-foreground: 212 13% 90%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 243 21% 15%;
+    --muted-foreground: 212 13% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 199 95% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%; /* #EF4444 */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 243 21% 20%;
+    --input: 243 21% 20%;
+    --ring: 199 95% 60%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Custom scanner theme colors */
+    --safe: 123 83% 57%; /* #22C55E */
+    --suspicious: 48 96% 53%; /* #FACC15 */
+    --unsafe: 0 84% 60%; /* #EF4444 */
+    
+    /* Gradients */
+    --gradient-ember: linear-gradient(135deg, hsl(243 21% 11%), hsl(263 68% 70%)); /* #1F1C2C → #9260AB */
+    --gradient-glow: linear-gradient(135deg, hsl(199 95% 60% / 0.2), hsl(199 95% 60% / 0.05));
+    
+    /* Shadows and effects */
+    --shadow-glow: 0 0 30px hsl(199 95% 60% / 0.3);
+    --shadow-card: 0 10px 30px -10px hsl(243 21% 5% / 0.5);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +115,38 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background: var(--gradient-ember);
+    min-height: 100vh;
+  }
+  
+  /* Custom utility classes */
+  .glow-button {
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 15px hsl(var(--primary) / 0.2);
+  }
+  
+  .glow-button:hover {
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+  }
+  
+  .status-safe {
+    color: hsl(var(--safe));
+  }
+  
+  .status-suspicious {
+    color: hsl(var(--suspicious));
+  }
+  
+  .status-unsafe {
+    color: hsl(var(--unsafe));
+  }
+  
+  .card-scanner {
+    background: hsl(var(--card) / 0.8);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-card);
+    border: 1px solid hsl(var(--border));
   }
 }

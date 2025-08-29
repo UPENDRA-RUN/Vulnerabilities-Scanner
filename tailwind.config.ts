@@ -52,6 +52,10 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Scanner theme colors
+				safe: 'hsl(var(--safe))',
+				suspicious: 'hsl(var(--suspicious))',
+				unsafe: 'hsl(var(--unsafe))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
