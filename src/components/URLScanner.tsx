@@ -40,11 +40,91 @@ const URLScanner = () => {
   const performComprehensiveScan = (inputUrl: string): ScanResult => {
     const checks: SecurityCheck[] = [];
     let score = 100;
+    let correctedUrl = inputUrl.trim();
+    
+    // URL Normalization and Correction
+    if (!correctedUrl.startsWith('http://') && !correctedUrl.startsWith('https://')) {
+      correctedUrl = 'https://' + correctedUrl;
+    }
     
     try {
-      const urlObj = new URL(inputUrl);
+      const urlObj = new URL(correctedUrl);
       const domain = urlObj.hostname;
       const protocol = urlObj.protocol;
+      
+      // URL Format Validation
+      const isValidUrl = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(correctedUrl);
+      
+      if (isValidUrl && correctedUrl !== inputUrl) {
+        checks.push({
+          name: 'URL Format Correction',
+          status: 'warning',
+          description: `URL auto-corrected from "${inputUrl}" to "${correctedUrl}"`,
+          impact: 'low'
+        });
+        score -= 5;
+      } else if (isValidUrl) {
+        checks.push({
+          name: 'URL Format Validation',
+          status: 'pass',
+          description: 'URL format is valid and properly structured',
+          impact: 'medium'
+        });
+      } else {
+        checks.push({
+          name: 'URL Format Validation',
+          status: 'fail',
+          description: 'URL format is invalid or malformed',
+          impact: 'high'
+        });
+        score -= 25;
+      }
+
+      // Domain Structure Analysis
+      const domainParts = domain.split('.');
+      if (domainParts.length < 2) {
+        checks.push({
+          name: 'Domain Structure',
+          status: 'fail',
+          description: 'Invalid domain structure detected',
+          impact: 'high'
+        });
+        score -= 30;
+      } else if (domainParts.length > 4) {
+        checks.push({
+          name: 'Domain Structure',
+          status: 'warning',
+          description: 'Complex subdomain structure detected',
+          impact: 'medium'
+        });
+        score -= 10;
+      } else {
+        checks.push({
+          name: 'Domain Structure',
+          status: 'pass',
+          description: 'Domain structure is valid',
+          impact: 'medium'
+        });
+      }
+
+      // IP Address Detection
+      const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+      if (ipPattern.test(domain)) {
+        checks.push({
+          name: 'IP Address Usage',
+          status: 'warning',
+          description: 'URL uses IP address instead of domain name',
+          impact: 'medium'
+        });
+        score -= 15;
+      } else {
+        checks.push({
+          name: 'IP Address Usage',
+          status: 'pass',
+          description: 'Uses proper domain name instead of IP',
+          impact: 'low'
+        });
+      }
 
       // HTTPS Check
       if (protocol === 'https:') {
