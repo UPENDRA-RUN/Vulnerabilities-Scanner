@@ -1,73 +1,77 @@
-# Welcome to your Lovable project
+🛡️ Advanced URL Vulnerability Scanner
 
-## Project info
 
-**URL**: https://lovable.dev/projects/0afe6b88-e02d-448e-9df9-2b1713ee72e3
 
-## How can I edit this code?
 
-There are several ways of editing your application.
 
-**Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0afe6b88-e02d-448e-9df9-2b1713ee72e3) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
 
-**Use your preferred IDE**
+A modern security tool to scan and analyze URLs for vulnerabilities. Built with React + Tailwind + shadcn/ui, it detects phishing indicators, malicious extensions, and insecure domains while providing detailed security insights.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+✨ Features
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+✅ Real-time URL Security Analysis
+✅ Threat Score (0–100) with Safe, Suspicious, Unsafe classification
+✅ Phishing & Malware Detection (keywords, extensions, obfuscation)
+✅ QR Code Upload → extract URL from image & scan instantly
+✅ Scan History → view, filter, and re-scan past checks
+✅ Export Results → save scans as JSON reports
+✅ Beautiful UI with Tailwind + shadcn/ui
 
-Follow these steps:
+📂 Project Structure
+src/
+│── components/ui/       # Reusable UI components
+│── hooks/use-toast.ts   # Toast notifications
+│── lib/utils.ts         # Utility helpers
+│── URLScanner.tsx       # Main scanner logic + UI
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+⚡ Installation
+1️⃣ Clone the repo
+git clone https://github.com/yourusername/url-vulnerability-scanner.git
+cd url-vulnerability-scanner
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2️⃣ Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3️⃣ Start development server
 npm run dev
-```
 
-**Edit a file directly in GitHub**
+4️⃣ Open in browser → http://localhost:5173
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+🔧 Tech Stack
+⚛️ React (Vite) – UI framework
+🎨 TailwindCSS – Styling
+🧩 shadcn/ui – Modern UI components
+🛠 TypeScript – Strong typing
+🎭 Lucide Icons – For clear visual feedback
 
-**Use GitHub Codespaces**
+📸 Screenshots
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+🔍 Main Scanner
+(Add screenshot here)
 
-## What technologies are used for this project?
+📊 Detailed Results
+(Add screenshot here)
 
-This project is built with:
+📜 Scan History
+(Add screenshot here)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+📖 Usage
 
-## How can I deploy this project?
+Enter a URL → click Scan
+Or Upload QR Code → auto extract & scan
+Review Security Checks + Threat Score
+Export Results to JSON
+Browse your Scan History anytime
 
-Simply open [Lovable](https://lovable.dev/projects/0afe6b88-e02d-448e-9df9-2b1713ee72e3) and click on Share -> Publish.
+🤝 Contributing
 
-## Can I connect a custom domain to my Lovable project?
+💡 Got an idea? Fork this repo, create a branch, and submit a PR!
 
-Yes, you can!
+git checkout -b feature/your-feature
+git commit -m "Add new feature"
+git push origin feature/your-feature
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+📜 License
+This project is licensed under the MIT License.
