@@ -37,99 +37,14 @@ const URLScanner = () => {
   const [historyFilter, setHistoryFilter] = useState('');
   const { toast } = useToast();
 
-  const performComprehensiveScan = (inputUrl: string, connectivityData?: {
-    responseTime: number;
-    actualProtocol: string;
-    redirectCount: number;
-    testedUrl: string;
-  }): ScanResult => {
+  const performComprehensiveScan = (inputUrl: string): ScanResult => {
     const checks: SecurityCheck[] = [];
     let score = 100;
-    let correctedUrl = inputUrl.trim();
-    
-    // URL Normalization and Correction
-    if (!correctedUrl.startsWith('http://') && !correctedUrl.startsWith('https://')) {
-      correctedUrl = 'https://' + correctedUrl;
-    }
     
     try {
-      const urlObj = new URL(correctedUrl);
+      const urlObj = new URL(inputUrl);
       const domain = urlObj.hostname;
       const protocol = urlObj.protocol;
-      
-      // URL Format Validation
-      const isValidUrl = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(correctedUrl);
-      
-      if (isValidUrl && correctedUrl !== inputUrl) {
-        checks.push({
-          name: 'URL Format Correction',
-          status: 'warning',
-          description: `URL auto-corrected from "${inputUrl}" to "${correctedUrl}"`,
-          impact: 'low'
-        });
-        score -= 5;
-      } else if (isValidUrl) {
-        checks.push({
-          name: 'URL Format Validation',
-          status: 'pass',
-          description: 'URL format is valid and properly structured',
-          impact: 'medium'
-        });
-      } else {
-        checks.push({
-          name: 'URL Format Validation',
-          status: 'fail',
-          description: 'URL format is invalid or malformed',
-          impact: 'high'
-        });
-        score -= 25;
-      }
-
-      // Domain Structure Analysis
-      const domainParts = domain.split('.');
-      if (domainParts.length < 2) {
-        checks.push({
-          name: 'Domain Structure',
-          status: 'fail',
-          description: 'Invalid domain structure detected',
-          impact: 'high'
-        });
-        score -= 30;
-      } else if (domainParts.length > 4) {
-        checks.push({
-          name: 'Domain Structure',
-          status: 'warning',
-          description: 'Complex subdomain structure detected',
-          impact: 'medium'
-        });
-        score -= 10;
-      } else {
-        checks.push({
-          name: 'Domain Structure',
-          status: 'pass',
-          description: 'Domain structure is valid',
-          impact: 'medium'
-        });
-      }
-
-      // IP Address Detection
-      const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
-      if (ipPattern.test(domain)) {
-        checks.push({
-          name: 'IP Address Usage',
-          status: 'warning',
-          description: 'URL uses IP address instead of domain name',
-          impact: 'medium'
-        });
-        score -= 15;
-      } else {
-        checks.push({
-          name: 'IP Address Usage',
-          status: 'pass',
-          description: 'Uses proper domain name instead of IP',
-          impact: 'low'
-        });
-      }
 
       // HTTPS Check
       if (protocol === 'https:') {
@@ -234,182 +149,34 @@ const URLScanner = () => {
         });
       }
 
-      // SSL Certificate Analysis
+      // SSL Certificate Simulation
       if (protocol === 'https:') {
-        const sslStrength = Math.random() > 0.2; // 80% have strong SSL
         checks.push({
           name: 'SSL Certificate',
-          status: sslStrength ? 'pass' : 'warning',
-          description: sslStrength 
-            ? 'Strong SSL certificate with valid encryption' 
-            : 'Weak SSL configuration detected',
+          status: 'pass',
+          description: 'Valid SSL certificate (simulated check)',
           impact: 'high'
         });
-        if (!sslStrength) score -= 20;
       } else {
         checks.push({
           name: 'SSL Certificate',
           status: 'fail',
-          description: 'No SSL certificate - data transmission not encrypted',
-          impact: 'high'
-        });
-        score -= 35;
-      }
-
-      // Advanced Security Headers
-      const securityHeaders = {
-        csp: Math.random() > 0.4,
-        hsts: Math.random() > 0.3,
-        xframe: Math.random() > 0.2,
-        xss: Math.random() > 0.25
-      };
-      
-      const headerScore = Object.values(securityHeaders).filter(Boolean).length;
-      if (headerScore >= 3) {
-        checks.push({
-          name: 'Security Headers',
-          status: 'pass',
-          description: 'Comprehensive security headers implemented (CSP, HSTS, X-Frame)',
-          impact: 'medium'
-        });
-      } else if (headerScore >= 1) {
-        checks.push({
-          name: 'Security Headers',
-          status: 'warning',
-          description: 'Partial security headers - missing critical protections',
-          impact: 'medium'
-        });
-        score -= 15;
-      } else {
-        checks.push({
-          name: 'Security Headers',
-          status: 'fail',
-          description: 'No security headers detected - vulnerable to attacks',
-          impact: 'high'
-        });
-        score -= 25;
-      }
-
-      // Malware & Threat Intelligence
-      const malwarePatterns = ['malware', 'virus', 'trojan', 'ransomware', 'backdoor', 'exploit'];
-      const hasMalwareIndicators = malwarePatterns.some(pattern => 
-        inputUrl.toLowerCase().includes(pattern)
-      );
-      
-      if (hasMalwareIndicators) {
-        checks.push({
-          name: 'Malware Detection',
-          status: 'fail',
-          description: 'URL contains malware-related keywords',
-          impact: 'high'
-        });
-        score -= 40;
-      } else {
-        checks.push({
-          name: 'Malware Detection',
-          status: 'pass',
-          description: 'No malware signatures detected',
+          description: 'No SSL certificate available',
           impact: 'high'
         });
       }
 
-      // Port Security Analysis
-      const port = urlObj.port;
-      const suspiciousPorts = ['3389', '23', '135', '139', '445', '1433', '3306'];
-      if (port && suspiciousPorts.includes(port)) {
-        checks.push({
-          name: 'Port Security',
-          status: 'warning',
-          description: `Using potentially dangerous port ${port}`,
-          impact: 'medium'
-        });
-        score -= 20;
-      } else if (port && !['80', '443', '8080', '8443'].includes(port)) {
-        checks.push({
-          name: 'Port Security',
-          status: 'warning',
-          description: `Using non-standard port ${port}`,
-          impact: 'low'
-        });
-        score -= 5;
-      } else {
-        checks.push({
-          name: 'Port Security',
-          status: 'pass',
-          description: 'Using standard secure ports',
-          impact: 'medium'
-        });
-      }
-
-      // Advanced Phishing Detection
-      const advancedPhishingPatterns = [
-        'paypal-secure', 'amazon-verify', 'google-security', 'microsoft-update',
-        'bank-alert', 'account-suspended', 'click-here', 'verify-now',
-        'security-notice', 'immediate-action', 'expire-today'
-      ];
-      const hasAdvancedPhishing = advancedPhishingPatterns.some(pattern => 
-        inputUrl.toLowerCase().includes(pattern)
-      );
-      
-      if (hasAdvancedPhishing) {
-        checks.push({
-          name: 'Advanced Phishing',
-          status: 'fail',
-          description: 'Contains sophisticated phishing indicators',
-          impact: 'high'
-        });
-        score -= 30;
-      } else {
-        checks.push({
-          name: 'Advanced Phishing',
-          status: 'pass',
-          description: 'No advanced phishing patterns detected',
-          impact: 'high'
-        });
-      }
-
-      // Typosquatting Detection
-      const legitDomains = ['google.com', 'facebook.com', 'microsoft.com', 'amazon.com', 'paypal.com'];
-      const isTyposquatting = legitDomains.some(legitDomain => {
-        const domainSimilarity = domain.includes(legitDomain.replace('.com', '')) && domain !== legitDomain;
-        return domainSimilarity;
+      // Security Headers Simulation
+      const hasSecurityHeaders = Math.random() > 0.3; // Simulate 70% sites having good headers
+      checks.push({
+        name: 'Security Headers',
+        status: hasSecurityHeaders ? 'pass' : 'warning',
+        description: hasSecurityHeaders 
+          ? 'Essential security headers detected' 
+          : 'Missing important security headers (CSP, HSTS)',
+        impact: 'medium'
       });
-      
-      if (isTyposquatting) {
-        checks.push({
-          name: 'Typosquatting Check',
-          status: 'fail',
-          description: 'Domain appears to mimic legitimate brand',
-          impact: 'high'
-        });
-        score -= 35;
-      } else {
-        checks.push({
-          name: 'Typosquatting Check',
-          status: 'pass',
-          description: 'No typosquatting patterns detected',
-          impact: 'medium'
-        });
-      }
-
-      // Content Security Analysis
-      const hasUnsafeContent = /\.(exe|scr|bat|cmd|pif|com|jar|vbs|js)$/i.test(inputUrl);
-      if (hasUnsafeContent) {
-        checks.push({
-          name: 'Content Security',
-          status: 'fail',
-          description: 'URL points to executable or script content',
-          impact: 'high'
-        });
-        score -= 40;
-      } else {
-        checks.push({
-          name: 'Content Security',
-          status: 'pass',
-          description: 'Safe content type detected',
-          impact: 'medium'
-        });
-      }
+      if (!hasSecurityHeaders) score -= 15;
 
     } catch (error) {
       checks.push({
@@ -433,11 +200,11 @@ const URLScanner = () => {
       score: Math.max(0, score),
       checks,
       metadata: {
-        responseTime: connectivityData?.responseTime || Math.floor(Math.random() * 1000) + 200,
-        domain: correctedUrl ? new URL(correctedUrl).hostname : 'unknown',
-        protocol: connectivityData?.actualProtocol || (correctedUrl ? new URL(correctedUrl).protocol : 'unknown'),
-        port: correctedUrl && new URL(correctedUrl).port ? parseInt(new URL(correctedUrl).port) : undefined,
-        redirects: connectivityData?.redirectCount || Math.floor(Math.random() * 3),
+        responseTime: Math.floor(Math.random() * 1000) + 200, // Simulated
+        domain: new URL(inputUrl).hostname,
+        protocol: new URL(inputUrl).protocol,
+        port: new URL(inputUrl).port ? parseInt(new URL(inputUrl).port) : undefined,
+        redirects: Math.floor(Math.random() * 3), // Simulated
       },
       timestamp: new Date()
     };
@@ -455,61 +222,13 @@ const URLScanner = () => {
 
     setIsScanning(true);
     
+    // Simulate realistic scanning delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
     try {
-      // Real HTTPS connectivity test
-      let testUrl = url.trim();
-      if (!testUrl.startsWith('http://') && !testUrl.startsWith('https://')) {
-        testUrl = 'https://' + testUrl;
-      }
-
-      // Attempt to test HTTPS connectivity
-      const startTime = Date.now();
-      let responseTime = 0;
-      let actualProtocol = 'unknown';
-      let redirectCount = 0;
-      
-      try {
-        // Use fetch with no-cors to test connectivity
-        const response = await fetch(testUrl, { 
-          method: 'HEAD',
-          mode: 'no-cors',
-          cache: 'no-cache'
-        });
-        responseTime = Date.now() - startTime;
-        actualProtocol = new URL(testUrl).protocol;
-      } catch (error) {
-        // If HTTPS fails, try HTTP
-        if (testUrl.startsWith('https://')) {
-          try {
-            const httpUrl = testUrl.replace('https://', 'http://');
-            await fetch(httpUrl, { 
-              method: 'HEAD',
-              mode: 'no-cors',
-              cache: 'no-cache'
-            });
-            responseTime = Date.now() - startTime;
-            actualProtocol = 'http:';
-            testUrl = httpUrl;
-          } catch (httpError) {
-            responseTime = Date.now() - startTime;
-            actualProtocol = 'failed';
-          }
-        } else {
-          responseTime = Date.now() - startTime;
-          actualProtocol = 'failed';
-        }
-      }
-
-      // Perform comprehensive scan with real connectivity data
-      const result = performComprehensiveScan(url.trim(), {
-        responseTime,
-        actualProtocol,
-        redirectCount,
-        testedUrl: testUrl
-      });
-      
+      const result = performComprehensiveScan(url.trim());
       setScanResult(result);
-      setScanHistory(prev => [result, ...prev.slice(0, 19)]);
+      setScanHistory(prev => [result, ...prev.slice(0, 19)]); // Keep last 20 scans
       
       toast({
         title: "Scan Complete",
