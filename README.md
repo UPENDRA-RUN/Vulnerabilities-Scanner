@@ -1,12 +1,5 @@
 🛡️ Advanced URL Vulnerability Scanner
 
-
-
-
-
-
-
-
 A modern security tool to scan and analyze URLs for vulnerabilities. Built with React + Tailwind + shadcn/ui, it detects phishing indicators, malicious extensions, and insecure domains while providing detailed security insights.
 
 ✨ Features
