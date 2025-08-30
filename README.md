@@ -21,8 +21,7 @@ src/
 
 ⚡ Installation
 1️⃣ Clone the repo
-git clone https://github.com/yourusername/url-vulnerability-scanner.git
-cd url-vulnerability-scanner
+git clone https:https://vulnerabilities-scanner.vercel.app/
 
 2️⃣ Install dependencies
 npm install
